@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
+import BookList from './BookList'
 
 class ExpandMyLibrary extends Component {
   state = {
@@ -11,11 +12,11 @@ class ExpandMyLibrary extends Component {
   updateQuery = (query) => {
     this.setState(() => ({
       query: query
-    }))
+  }))
 
-    BooksAPI.search(this.state.query).then((books) => {
+  BooksAPI.search(this.state.query).then((response) => {
       this.setState(() => ({
-        books: books
+        books: Array.isArray(response) ? response : []
       }))
     })
   }
@@ -45,8 +46,7 @@ class ExpandMyLibrary extends Component {
         </div>
         </div>
         <div className="search-books-results">
-        <ol className="books-grid"></ol>
-        {JSON.stringify(books)}
+          <BookList books={books} />
         </div>
       </div>
     )
