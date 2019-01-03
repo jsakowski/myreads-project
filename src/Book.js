@@ -4,12 +4,14 @@ import PropTypes from 'prop-types'
 const Book = (props) => {
   const { book } = props;
 
+  const thumb = book.imageLinks ? book.imageLinks.smallThumbnail : '';
+
   return (
     <div className="book">
       <div className="book-top">
-        <div 
-          className="book-cover" 
-          style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.smallThumbnail})` }}></div>
+        <div
+          className="book-cover"
+          style={{ width: 128, height: 193, backgroundImage: `url(${thumb})` }}></div>
         <div className="book-shelf-changer">
         {/*
           TODO: add functionality to change a shelf

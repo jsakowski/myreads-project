@@ -12,9 +12,13 @@ class ExpandMyLibrary extends Component {
   updateQuery = (query) => {
     this.setState(() => ({
       query: query
-  }))
+    }))
 
-  BooksAPI.search(this.state.query).then((response) => {
+    if(this.state.query !== '') this.findBooks(this.state.query);
+  }
+
+  findBooks = (query) => {
+    BooksAPI.search(query).then((response) => {
       this.setState(() => ({
         books: Array.isArray(response) ? response : []
       }))
@@ -23,6 +27,13 @@ class ExpandMyLibrary extends Component {
 
   render() {
     const { query, books } = this.state
+    const {mybooks} = this.props
+
+    const bookList = this.state.books.map((book) => {
+      const bookOnShelf = mybooks.filter((mybook) => mybook.id === book.id);
+      book.shelf = bookOnShelf.length > 0 ? bookOnShelf[0].shelf : 'none';
+      return book;
+    })
 
     return (
       <div className="search-books">
@@ -37,16 +48,16 @@ class ExpandMyLibrary extends Component {
             However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
             you don't find a specific author or title. Every search is limited by search terms.
             */}
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Search by title or author"
-              value={query} 
+              value={query}
               onChange={(event) => this.updateQuery(event.target.value)}/>
 
         </div>
         </div>
         <div className="search-books-results">
-          <BookList books={books} />
+          <BookList books={bookList} />
         </div>
       </div>
     )
