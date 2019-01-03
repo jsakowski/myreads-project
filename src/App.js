@@ -5,13 +5,7 @@ import './App.css'
 import ExpandMyLibrary from './ExpandMyLibrary'
 import Bookshelf from './Bookshelf'
 import * as BooksAPI from './BooksAPI'
-
-const bookshelves = [
-  { id: 'currentlyReading', name: 'Currently Reading'},
-  { id: 'wantToRead', name: 'Want to Read'},
-  { id: 'read', name: 'Read'},
-  { id: 'none', name: "None"}
-]
+import * as Constants from './constants'
 
 class BooksApp extends React.Component {
   state = {
@@ -48,7 +42,7 @@ class BooksApp extends React.Component {
             <div className="list-books-content">
               <div>
                 {
-                  bookshelves.map((shelf) =>
+                  Constants.bookshelves.map((shelf) =>
                     shelf.id !== 'none' ?
                       <Bookshelf key={shelf.id} books={this.getBooksForShelf(shelf.id)} name={shelf.name} />
                       : ''
