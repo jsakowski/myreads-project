@@ -4,8 +4,3 @@ export const bookshelves = [
   { id: 'read', name: 'Read'},
   { id: 'none', name: "None"}
 ]
-
-export const shelfOptions = [
-  { id: 'move', name: 'Move to...'},
-  bookshelves
-]

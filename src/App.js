@@ -13,26 +13,66 @@ class BooksApp extends React.Component {
   }
 
   componentDidMount() {
+    this.getMyBooks()
+  }
+
+  getMyBooks = () => {
     BooksAPI.getAll()
       .then((mybooks) => {
-        console.log(mybooks);
         this.setState((currentState) => ({
           books: mybooks
         }))
       })
-      .catch(err => console.log('There was an error:' + err))
   }
 
-  getBooksForShelf(shelf) {
+  getBooksForShelf = (shelf) => {
     return this.state.books.filter((book) => book.shelf === shelf)
   }
 
-  render() {
+  changeBookShelf = (book, shelf, result) => {
+    if (result[shelf]) {
+      // check if book was added to shelf
+      let updatedBook = result[shelf].find(bookId => bookId === book.id)
 
+      if (updatedBook) {
+        // find book in my books
+        let mybook = this.state.books.find(mybook => mybook.id === book.id)
+
+        if (mybook) {
+          // update book in my books state
+          this.setState({ 
+            books: this.state.books.map(b => {
+              if (b.id === book.id)
+                b.shelf = shelf
+              return b
+            })
+          })
+        }
+        else {
+          // add book to my books
+          book.shelf = shelf
+          this.setState({ books: this.state.books.concat([book])})
+        }
+      }
+    }
+    else {
+      // delete book from my books
+      this.setState({books: this.state.books.filter(b => b.id !== book.id)})
+    }
+  }
+
+  onChangeBookShelf = (book, shelf) => {
+    BooksAPI.update(book, shelf)
+      .then((result) => {
+        this.changeBookShelf(book, shelf, result)
+      })
+}
+
+  render() {
     return (
       <div className="app">
         <Route path='/search' render={() => (
-          <ExpandMyLibrary mybooks={this.state.books} />
+          <ExpandMyLibrary mybooks={this.state.books} onAdd={this.onChangeBookShelf} />
         )} />
         <Route exact path='/' render={({ history }) => (
           <div className="list-books">
@@ -44,7 +84,7 @@ class BooksApp extends React.Component {
                 {
                   Constants.bookshelves.map((shelf) =>
                     shelf.id !== 'none' ?
-                      <Bookshelf key={shelf.id} books={this.getBooksForShelf(shelf.id)} name={shelf.name} />
+                      <Bookshelf key={shelf.id} books={this.getBooksForShelf(shelf.id)} name={shelf.name} onAdd={this.onChangeBookShelf} />
                       : ''
                   )
                 }
